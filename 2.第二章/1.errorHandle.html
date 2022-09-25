@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    let handleError = null;
+    const utils = {
+      foo(fn) {
+        callWithErrorHandling(fn);
+      },
+      // 用户侧可以自定义传入一个错误处理函数
+      registerErrorHandler(fn) {
+        handleError = fn;
+      },
+    };
+
+    function callWithErrorHandling(fn) {
+      try {
+        fn && fn();
+      } catch (e) {
+        // 捕获到的错误传递到用户传入的错误处理器
+        handleError(e);
+      }
+    }
+
+    // 用户侧使用，先注册错误回调器
+    utils.registerErrorHandler((e) => {
+      console.log("自定义错误处理", e);
+    });
+    utils.foo(() => {
+      a;
+    });
+  </script>
+</html>
