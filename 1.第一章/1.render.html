@@ -12,21 +12,34 @@
       tag: "div",
       children: [
         { tag: "span", children: "hello world" },
-        { tag: "p", children: "hello world2" },
+        {
+          tag: "p",
+          children: "hello world2",
+          props: { onClick: () => alert("hhh") },
+        },
       ],
     };
 
-    function Render(obj, root) {
-      const el = document.createElement(obj.tag);
-      if (typeof obj.children === "string") {
-        const text = document.createTextNode(obj.children);
-        el.appendChild(text);
-      } else if (obj.children) {
+    function Render(vnode, container) {
+      const el = document.createElement(vnode.tag);
+      for (const key in vnode.props) {
+        if (/^on/.test(key)) {
+          // 以 on 开头，说明是一个事件
+          el.addEventListener(
+            key.substr(2).toLowerCase(),
+            // 事件处理函数
+            vnode.props[key]
+          );
+        }
+      }
+      if (typeof vnode.children === "string") {
+        el.appendChild(document.createTextNode(vnode.children));
+      } else if (Array.isArray(vnode.children)) {
         // 数组，递归调用 Render
-        obj.children.forEach((child) => Render(child, el));
+        vnode.children.forEach((child) => Render(child, el));
       }
 
-      root.appendChild(el);
+      container.appendChild(el);
     }
 
     Render(obj, document.body);
